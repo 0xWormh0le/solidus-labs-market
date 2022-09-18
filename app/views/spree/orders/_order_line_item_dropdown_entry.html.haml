@@ -1,0 +1,19 @@
+:ruby
+  # Similar to frontend/app/views/spree/orders/_line_item.html.erb
+  # Expected locals:
+  #   line_item <Spree::LineItem>
+  variant = line_item.variant
+- if variant
+  .entry
+    .entry-thumb
+      = link_to(render('spree/shared/image', image: (variant.gallery.images.first || variant.product.gallery.images.first), size: :small), variant.product)
+    .entry-content
+      %h4.entry-title
+        = link_to(line_item.name.truncate(36), variant.product)
+      %span.entry-meta.entry-var
+        - variant.option_values.each do | value, idx |
+          #{value.presentation}
+          - if idx != variant.option_values.length - 1
+            -
+      %span.entry-meta.entry-qty
+        #{line_item.quantity} x #{line_item.display_amount.to_html}

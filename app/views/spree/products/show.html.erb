@@ -1,0 +1,121 @@
+<!-- Main Content Wrapper Start -->
+<% content_for :footer_extra do %>
+<%= javascript_include_tag 'spree/frontend/product' %>
+<% end # footer_extra -%>
+<% if spree_current_user && can?(:manage, @product) -%>
+  <div id='manage_actions' class='container alert alert-secondary text-right'>
+    <%= link_to('Edit Product', edit_admin_product_path(id: @product.id), class:'btn btn-warning') %>
+  </div>
+  <br/>
+<% end # manage_actions -%>
+<% cache [I18n.locale, current_pricing_options, @product] do %>
+<div data-hook="product_show" itemscope itemtype="http://schema.org/Product">
+  <div class="container mb-12">
+    <div id="content" class="main-content-wrapper">
+        <div class="page-content-inner enable-full-width">
+          <div id="wrapper" class="row" data-hook="product_left_part_wrap">
+            <ul class="breadcrumbs">
+            <% 
+              @product.categories.each do|category_list|
+                category_list.each_with_index do|category, category_index|
+            %>
+                <li><%= link_to(category.name, seo_url(category)) %></li>
+              <% end %>
+            <% end %>
+            </ul>
+            <div class="padding-top-2x mt-2 hidden-sm-up product-info-basic">
+              <div class="col-9 product-title">
+                <div class="product-taxon">
+                  <span><%= @product.taxons.last ? @product.taxons.last.name : '' %></span>
+                </div>
+                <div class="product-title">
+                  <h6><%= @product.name %></h6>
+                </div>
+              </div>
+              <div class="col-3 text-right product-price">
+                <h2>
+                  $<%= @product.price %>
+                </h2>
+              </div>
+            </div>
+            <div class="content-section col-lg-7 col-md-7 col-sm-7">
+              <!-- ############## GALLERY SECTIONS ############ -->
+              <div class="product-main-image">
+                  <div class="product-image" data-hook="product_images">
+                      <div class="product-gallery-wrapper">
+
+                          <div class="product-gallery__large-image">
+                              <figure class="product-gallery__image">
+                                  <% if @product.variants.first %>
+                                    <%= render partial: 'spree/variants/variant_gallery', locals: { variant: @product.variants.first, is_prod: true } %>
+                                  <% end %>
+                              </figure>
+                              <!--<div class="product-gallery__actions">
+                                  <button class="action-btn btn-zoom-popup"><i class="dl-icon-zoom-in"></i></button>
+                                  <a href="https://www.youtube.com/watch?v=Rp19QD2XIGM" class="action-btn video-popup"><i class="dl-icon-format-video"></i></a>
+                              </div>-->
+                          </div>
+                      </div>
+                  </div>
+
+                </div>
+              <!-- ############## END GALLERY SECTION ############ -->
+            </div>
+
+            <div class="col-lg-5 col-md-5 col-sm-5">
+                <div class="make-me-sticky">
+                  <!-- ############## SIDEBAR SECTIONS ############ -->
+                      <div class="product-summary mt--40 mt-md--10 mt-sm--30">
+                          <div class="product-info-basic">
+                            <div class="col-9 product-title">
+                              <div class="product-taxon">
+                                <span><%= @product.taxons.last ? @product.taxons.last.name : '' %></span>
+                              </div>
+                              <div class="product-title">
+                                <h6><%= @product.name %></h6>
+                              </div>
+                            </div>
+                            <div class="col-3 text-right product-price">
+                              <h2>
+                                $<%= @product.price %>
+                              </h2>
+                            </div>
+                          </div>
+
+                          <div class="padding-top-2x mt-2 clear">
+                            
+                          </div>
+
+                        </div>
+
+                        <div id="cart-form" data-hook="cart_form">
+                          <%= render partial: 'cart_form_extended' %>
+                        </div>
+                  <!-- ############## END SIDEBAR SECTION ############ -->
+                </div>
+            </div>
+          <!-- ############## Anything after the sidebar --- description etc. ############ -->
+          </div>
+        </div>
+    </div>
+  </div>
+  <br/>
+  <br/>
+  <div class="bg-secondary padding-top-2x padding-bottom-2x mb-3 mt-40 container" id="details">
+    <div class="row">
+      <div class="col-md-6">
+        <h3 class="h4">Details</h3>
+        <p class="mb-4">
+            <%= product_description(@product) rescue t('spree.product_has_no_description') %>
+        </p>
+      </div>
+      <div class="col-md-6">
+        <div data-hook="product_properties">
+          <%= render partial: 'properties' %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<% end # cache %>

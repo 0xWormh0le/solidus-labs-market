@@ -1,0 +1,22 @@
+:ruby
+  # Similar to frontend/app/views/spree/orders/_line_item.html.erb
+  # Expected locals:
+  #   line_item <Spree::LineItem>
+  variant = line_item.variant
+- if variant
+  .line-item
+    .cart-item-image.item-field
+      = link_to(render('spree/shared/image', image: (variant.gallery.images.first || variant.product.gallery.images.first), size: :small), variant.product)
+    .cart-item-description.item-field
+      %h6 
+        = link_to line_item.name.truncate(40), product_path(variant.product)
+      %span.option-text
+        = variant.options_text
+      - if line_item.insufficient_stock?
+        %span.out-of-stock 
+          = t('spree.out_of_stock')
+    .cart-item-price.item-field
+      %h4
+        = line_item.quantity.to_s + ' X' unless line_item.quantity < 2
+        = line_item.money.to_html
+      %span.shipping-fee.text-right='+ $4.35 shipping'

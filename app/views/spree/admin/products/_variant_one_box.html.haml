@@ -1,0 +1,9 @@
+.variant-one-box
+  = render partial: 'spree/shared/color_box', locals: { color_names: option['presentation'], color_values: option['extra_value'], var_ids: option['id'] }
+  .variant-description.box-shadow
+    .variant-heading
+      %span= 'Variant Name'
+    .variant-body
+      %input.variant-name(readonly="readonly" value="#{option['presentation']}")
+    .variant-footer
+      .cover

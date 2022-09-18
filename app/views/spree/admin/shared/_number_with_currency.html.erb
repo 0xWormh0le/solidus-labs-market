@@ -1,0 +1,25 @@
+<% amount_attr ||= :amount %>
+<% currency_attr ||= :currency %>
+<% currency ||= nil %>
+<% required ||= nil %>
+<% country ||= 'US' %>
+<% disposable ||= false %>
+
+<div class="input-group number-with-currency <%= "number-with-currency-with-select" unless currency %> js-number-with-currency">
+  <% if currency %>
+    <div class="input-group-append">
+      <span class="input-group-text number-with-currency-addon no-border bg-white color-black" data-currency="<%= currency %>">
+        <img src="https://www.countryflags.io/<%= country %>/flat/32.png">
+      </span>
+    </div>
+  <% else %>
+    <%= f.select currency_attr, Spree::Config.available_currencies.map(&:iso_code), {selected: Spree::Config.currency}, {required: required, class: 'number-with-currency-select'} %>
+  <% end %>
+  <div class="input-group-prepend">
+    <span class="input-group-text number-with-currency-symbol no-border bg-white color-black"><%= currency %></span>
+  </div>
+  <%= f.text_field amount_attr, value: number_to_currency(f.object.public_send(amount_attr), unit: '', delimiter: ''), class: 'form-control number-with-currency-amount no-border no-border-focus ml-n-3 bg-white color-black', required: required %>
+  <% if disposable %>
+    <a class="remove-currency">x</a>
+  <% end %>
+</div>

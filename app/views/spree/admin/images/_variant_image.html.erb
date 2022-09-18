@@ -1,0 +1,15 @@
+<div class="gallery-image-item" id="image-<%= image.id%>">
+    <span class="gallery-image-bg modal-image-trigger" data-toggle="modal" data-target="#modal-image-<%= image.id %>">
+    <%= render 'spree/admin/shared/image', image: image, size: :small %>
+    </span>
+    <%= render(
+      "spree/admin/shared/modal",
+      target: "modal-image-#{image.id}",
+      title: image.alt,
+      content: %{
+        <div class='align-center'>
+          #{image_tag(image.url(:large))}
+        </div>
+      }.html_safe) %>
+    <%= link_to_delete image, { :'data-id' => image.id,  url: admin_product_image_url(@product, image), no_text: true } %>
+</div>

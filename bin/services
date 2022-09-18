@@ -1,0 +1,101 @@
+#!/bin/bash
+set -u
+set -e
+
+APP_ROOT=../
+
+###################
+# Functions
+
+find_pid_of () {
+  args=$@
+  ps ax | grep "$args" | grep -v grep | awk '{print $1}'
+}
+
+kill_pid_of () {
+  local PID=`find_pid_of $0`
+  echo "  $@ pid is: $PID"
+  if [[ -n $PID ]]; then
+    echo " .. Kill $@ w/ $PID"
+    kill -QUIT $PID;
+  fi
+}
+
+checks () {
+  local PUMA_PID=`find_pid_of "puma 3.1"`
+  echo "| Puma: $PUMA_PID"
+  local SIDEKIQ_PID=`find_pid_of "sidekiq 5.2"`
+  echo "| Sidekiq: $SIDEKIQ_PID"
+  local REDIS_PID=`find_pid_of "redis-server"`
+  echo "| Redis: $REDIS_PID"
+}
+
+start_puma () {
+  cd $APP_ROOT;
+  local PID=`find_pid_of "puma 3.1"`
+  echo "Current Puma pid is: $PID"
+  if [[ -n $PID ]]; then
+    echo >&2 "| Already running" && exit 0
+  else
+    echo " .. starting Puma .. "
+    if [ "$ENV" -eq "development" ]; then
+      rails server Puma -b /var/www/solidus_market/shared/sockets/puma.sock -b 0.0.0.0 -p 3000 -e development;
+    else
+      bundle exec puma -C config/puma.rb --daemon;
+    fi
+  fi
+}
+
+stop_puma () {
+  bundle exec pumactl -S /var/www/solidus_market/shared/pids/puma.state -F /var/www/solidus_market/current/config/puma.rb stop
+  kill_pid_of "puma 3.1"
+}
+
+reload_puma () {
+  local PID=`find_pid_of "puma 3.1"`
+  echo "| Current Puma pid is: $PID"
+  if [[ -n $PID ]]; then
+    stop_puma
+  fi
+  start_puma
+}
+
+start_redis () {
+  /usr/local/bin/redis-server /etc/redis/6379.conf &
+}
+
+start_sidekiq () {
+	bundle exec sidekiq -q default -q mailers --daemon --logfile log/sidekiq.log
+}
+
+stop_sidekiq () {
+	kill_pid_of "sidekiq 5.2"
+}
+
+####################################
+# Command menu => actions
+
+case ${1-help} in
+start_puma)
+  start_puma
+  ;;
+stop_puma)
+  stop_puma
+  ;;
+reload_puma)
+  reload_puma
+  ;;
+start_redis)
+  start_redis
+  ;;
+start_sidekiq)
+	start_sidekiq
+	;;
+stop_sidekiq)
+	stop_sidekiq
+	;;
+*)
+  echo "Usage: $0 <start_puma|stop_puma|reload_puma|start_redis|start_sidekiq|stop_sidekiq>"
+  checks
+  exit
+esac

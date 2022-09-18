@@ -1,0 +1,71 @@
+:ruby
+  first_payment_method = @available_payment_methods.first
+  show_paypal = first_payment_method.is_a?(Spree::PaymentMethod::PayPal) &&
+    params[:show_other_payment_methods] != 'true'
+  user_paypal = collection.find{|spm| spm.payment_method.is_a?(Spree::PaymentMethod::PayPal) }
+
+.container
+  .row
+    .col-sm-1.col-md-3
+    .col-sm-10.col-md-6
+      - if @available_payment_methods.size > 0
+        %h3
+          %strong=t('payment.which_payment_methods')
+        %br/
+        - if (added_pm = added_payment_method)
+          .alert.alert-success.text-center.pt-5
+            %h4
+              -# TODO: = image_tag("/assets/icon/payments/#{added_pm.name.downcase.underscore}.png")
+              #{added_pm.name} Successfully Added
+          %br/
+        - if collection.size > 0
+          %table.table
+            %tbody
+              - collection.each do|spm|
+                %tr(id="store_payment_method_row_#{spm.id}")
+                  %td
+                    = link_to(spm.payment_method.name, spm)
+                  %td
+                    = link_to(store_payment_method_path(id: spm.id, show_other_payment_methods: params[:show_other_payment_methods]), method: :delete, class:'delete-resource fa fa-trash icon_link with-tip no-text', 'data-confirm' => t('spree.are_you_sure_delete') ) do
+                      Remove
+          %br/
+        .card
+          .card-header
+            %h5
+              %strong Add More
+          .card-body.p-5
+            - if show_paypal
+              .text-center
+                %h4=t('payment.best_payment_method')
+                = link_to(new_store_payment_method_path(store_payment_method: { payment_method_id: first_payment_method.id} ), class:'btn btn-primary rounded-pill') do
+                  = image_tag('/assets/icon/payments/paypal_white_icon_only_22.png')
+                  = t('payment.connect_with_paypal')
+            - else
+              = form_for(Spree::StorePaymentMethod.new) do|f|
+                %p
+                  = image_tag('/assets/icon/payments/credit_cards_all.png')
+                %h6
+                  %strong=t('payment.other_ways_to_get_paid')
+                %span=t('payment.choose_a_payment_method')
+                %br/
+                %br/
+                = f.select(:payment_method_id, payment_methods_select_options, class:'form-control' )
+                &nbsp;&nbsp;
+                = f.submit('Add', class:'btn btn-sm btn-primary rounded-pill')
+                %br/
+      - else # no @available_payment_methods
+        %h5=t('payment.selected_payment_methods')
+        .card
+          %ul.list-group.list-group-flush
+            - @store_payment_methods.each do|spm|
+              %li.list-group-item
+                = spm.payment_method.name
+      - if show_paypal
+        .pull-right.mt-1
+          = link_to(store_payment_methods_path(show_other_payment_methods: true)) do
+            %strong=t('payment.select_other_payment_methods')
+
+      %br/
+      %br/
+      = link_to(t('payment.finish_and_go_to_dashboard'), account_index_path, class:'btn btn-secondary text-white bg-dark')
+    .col-sm-1.col-md-3

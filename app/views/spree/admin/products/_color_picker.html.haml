@@ -1,0 +1,50 @@
+.color-picker.ps-fxd.w-100.h-100(style="display: none;")
+  .d-flex.z-9.m-auto
+    .color-palette-wrapper.box-shadow.mt-4.p-3(data-role="admin_product_form_colorpalette" style="display: ;")
+      .color-palette-heading.d-flex.jc-sb
+        %a.back-btn.csr-ptr.fs-25
+        .title
+          %h6= 'Create your variant color'
+          %span= 'Select up to two colors'
+        %a.close-btn.csr-ptr.fs-25= '×'
+      .color-palette-body.d-flex.mt-3
+        .color-palette.w-35p.h-25p
+          = render partial: 'spree/shared/color_box', locals: { color_names: 'Red', color_values: '#ff0000', var_ids: '5' }
+          = render partial: 'spree/shared/color_box', locals: { color_names: 'Green', color_values: '#00ff00', var_ids: '6' }
+          = render partial: 'spree/shared/color_box', locals: { color_names: 'Blue', color_values: '#0000ff', var_ids: '7' }
+          = render partial: 'spree/shared/color_box', locals: { color_names: 'Black', color_values: '#000000', var_ids: '8' }
+          = render partial: 'spree/shared/color_box', locals: { color_names: 'White', color_values: '#ffffff', var_ids: '9' }
+          = render partial: 'spree/shared/color_box', locals: { color_names: 'Pink', color_values: '#ffcccc', var_ids: '12' }
+          = render partial: 'spree/shared/color_box', locals: { color_names: 'Cyan', color_values: '#00ffff', var_ids: '13' }
+          = render partial: 'spree/shared/color_box', locals: { color_names: 'Gray', color_values: '#999999', var_ids: '20' }
+          .color-wrapper.pr-4px.d-flex.center
+            %a.color-add.m-auto.fs-32px.lh-35px.csr-ptr(style="width: 42px;height: 42px;border: black solid 2px;border-radius: 50px;")= '+'
+        .color-palette-preview.ml-4.ps-rel
+          .color-preview.d-flex
+            %input#colorpicker_value.hidden
+            .m-auto
+              %div(style="width: 69px; height: 69px; display: block;")
+          .reverse
+            %a.btn.btn-bg-white.w-10
+              %i.fa.fa-refresh
+          .confirm.ps-abs.rt-0.bt-0
+            %a.btn.btn-bg-black.w-10= 'OK'
+    .color-picker-wrapper.box-shadow.ml-4.mt-4.p-3(data-hook="admin_product_form_colorpicker" style="display: none;")
+      .color-picker-heading.d-flex.jc-sb
+        %a.back-btn.csr-ptr.fs-25
+        .title
+          %h6= 'Create your variant color'
+          %span= 'Select up to two colors'
+        %a.close-btn.csr-ptr.fs-25= '×'
+      .color-picker-body.d-flex.mt-3
+        .color-picker-palette
+        .color-picker-preview.ml-4.ps-rel
+          .color-preview.d-flex
+            .m-auto
+              = render partial: 'spree/shared/color_box', locals: { color_names: 'Maroon / White', color_values: '#990033,#ffffff', var_ids: '16' }
+          .color-name.field
+            %label.d-block(for="color_name")= 'Name'
+            %input(type="text" style="width: 112px;" id="color_name")
+          .confirm.ps-abs.rt-0.bt-0
+            %a.btn.btn-bg-black.w-10= 'OK'
+

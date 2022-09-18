@@ -1,0 +1,33 @@
+<% # Required locals:
+   #   price <Spree::Price>
+   # Optional locals:
+   #   required <Boolean> default: false
+   #   disposable <Boolean> default: whether price.id
+   #   currency_isos <Collection of String, currency ISO> override use of those from Spree::Config.available_currencies
+   required = false unless defined?(required)
+   currency_isos ||= Spree::Config.available_currencies.map(&:iso_code)
+   price ||= ::Spree::Price.new(country_iso: currency_isos.first)
+   disposable = !price.id.nil? unless defined?(disposable)
+   field_prefix = 'product[price_attributes][]'
+
+-%>
+<div class="input-group number-with-currency <%= 'number-with-currency-with-select' unless price.currency.present? %> js-number-with-currency">
+  <%= hidden_field_tag("#{field_prefix}[id]", price.id) if price.id -%>
+  <% if price.currency.present? %>
+    <%= hidden_field_tag("#{field_prefix}[currency]", price.currency) -%>
+    <div class="input-group-append">
+      <span class="input-group-text number-with-currency-addon no-border bg-white color-black" data-currency="<%= price.currency %>">
+        <img src="https://www.countryflags.io/<%= price.country_iso || price.related_country_isos.first %>/shiny/32.png" title="<%= price.currency -%>">
+      </span>
+    </div>
+  <% else %>
+    <%= select_tag("#{field_prefix}[currency]", options_for_select(currency_isos, price.currency), class: 'number-with-currency-select', 'data-type'=>'currency' ) %>
+  <% end %>
+  <div class="input-group-prepend">
+    <span class="input-group-text number-with-currency-symbol no-border bg-white color-black"><%= price.money_currency.try(:symbol) || '$' %></span>
+  </div>
+  <%= text_field_tag("#{field_prefix}[amount]", price.amount, unit: '', delimiter: '', class: 'form-control number-with-currency-amount no-border ml-n-3 bg-white color-black', required: required ) %>
+  <% if disposable %>
+    <a class="remove-currency">x</a>
+  <% end %>
+</div>

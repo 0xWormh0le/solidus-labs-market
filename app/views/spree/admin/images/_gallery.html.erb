@@ -1,0 +1,54 @@
+<div class="image-picker-bg" style="display: none;">
+  <div class="image-picker box-shadow">
+    <ul class="nav nav-tabs" id="gallary_tab" role="tablist">
+    <li class="nav-item">
+      <a class="nav-link active" id="upload-tab" data-toggle="tab" href="#upload" role="tab" aria-controls="upload" aria-selected="true">Upload</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="gallery-tab" data-toggle="tab" href="#gallery" role="tab" aria-controls="profile" aria-selected="false">Gallery</a>
+    </li>
+    </ul>
+    <div class="tab-content" id="gallary-tab-content">
+      <div class="tab-pane fade show active" id="upload" role="tabpanel" aria-labelledby="upload-tab">
+        <div id="upload-zone">
+          <legend align="center"><%= t("spree.admin.images.index.upload_images") %></legend>
+          <%= form_for [:admin, @product, Spree::Image.new], html: { multipart: true, id: 'upload-form' } do |f| %>
+            <label class="upload">
+              <i class="fa fa-5x fa-cloud-upload"></i>
+              <p>
+                <span class="button"><%= t("spree.admin.images.index.choose_files") %></span>
+              </p>
+              <p>
+                <%= t("spree.admin.images.index.drag_and_drop") %>
+              </p>
+
+              <%= f.file_field :attachment, multiple: '', class: 'hidden' %>
+              <%= f.hidden_field :viewable_id, value: @product.master.id %>
+            </label>
+          <% end %>
+          <div id="progress-zone" class="row"></div>
+          </div>
+          <div class="action-group d-flex fd-row-rev pt-2">
+            <a class="btn btn-bg-white brnd-6 add-variant" onclick="closeGallery()">Cancel</a>
+          </div>
+        </div>
+      <div class="tab-pane fade" id="gallery" role="tabpanel" aria-labelledby="gallery-tab">
+        <div class="scrollbar-macosx upload-gallery">
+          <div class="d-flex f-wrap">
+          <% images.each do |image| %>
+            <div class="gallery-item" onclick="gallery_item_clicked(this)">
+              <a data-id="<%= image.id %>" %> <%= render 'spree/admin/shared/image', image: image, size: :original %> </a>
+            </div>
+          <% end %>
+          </div>
+        </div>
+        <div class="action-group d-flex fd-row-rev pt-2">
+          <a class="btn btn-bg-white brnd-6 close-gallery" onclick="closeGallery()">Cancel</a>
+          <a class="btn btn-bg-black brnd-6 confirm-variant">
+            <i class="fa fa-check"></i> Choose
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

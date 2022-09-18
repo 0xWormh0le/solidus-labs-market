@@ -1,0 +1,181 @@
+:ruby
+  prices = @product.master.try(:prices).try(:order, 'id asc') || []
+  left_over_isos = Spree::Config.available_currencies.map(&:iso_code) - prices.collect{|p| p.country_iso }
+
+= hidden_field_tag(:form, params[:form])
+= f.hidden_field(:master_product_id)
+= f.hidden_field(:shipping_category_id, value: ::Spree::ShippingCategory.default.try(:id) || 1 )
+= f.hidden_field(:tax_category_id, value: ::Spree::TaxCategory.default.try(:id) || 1 )
+-#%legend(align="center") #{t('spree.product_info')}
+%div(data-hook="admin_product_form_fields")
+  .row
+    %div(class="left col-8" data-hook="admin_product_form_left")
+      - if (@master_product)
+        .box-shadow.box-body
+          %center
+            %h1
+              Can you beat
+              %span.yellow='$' + @master_product.price.to_s
+              shipped?
+            %span='392 buyers will be notified of this listing if you beat that price!'
+      %div.box-shadow.box-body.mt-4(data-hook="admin_product_form_price")
+        .d-flex
+          %span
+            = f.label :price, class: Spree::Config.require_master_price ? 'required' : '' do
+              = 'Your Price' #t('spree.price')
+            %br/
+            %a(href="#" onclick="addCurrencyPriceField()" class="fa fa-plus float-right")
+
+          .col-10
+            #curreny_prices_list.d-flex.f-wrap
+              - prices.each_with_index do|price, price_idx|
+                .col-6.mb-2
+                  = render partial: 'spree/admin/shared/currency_price_form', locals: { f: f, price: price, currency_isos: left_over_isos }
+              .col-6.mb-2
+                = render partial: 'spree/admin/shared/currency_price_form', locals: { f: f, price: ::Spree::Price.new(country_iso: left_over_isos.first, amount: prices.blank? ? @product.price : nil), currency_isos: left_over_isos, required: prices.size.zero? }
+                = f.error_message_on :price
+              #new_currency_price_wrapper(style="display:none;")
+                = render partial: 'spree/admin/shared/currency_price_form', locals: { f: f, price: ::Spree::Price.new(country_iso: left_over_isos.first, amount: prices.blank? ? @product.price : nil), currency_isos: left_over_isos }
+      .box-shadow.box-body.mt-4
+        %div(data-hook="admin_product_form_name")
+          = f.field_container :name do
+            = f.label :name, 'Product Title', class: 'required'
+            = f.text_field :name, class: 'fullwidth title', required: true
+            = f.error_message_on :name
+        %div(data-hook="admin_product_form_description")
+          = f.field_container :description do
+            = f.label :description
+            = f.text_area :description, {rows: "#{unless @product.has_variants? then '22' else '15' end}", class: 'fullwidth'}
+            = f.error_message_on :description
+        %div(data-hook="admin_product_form_category")
+          = f.field_container :taxons do
+            = f.label :category, 'Category'
+            = select_tag('product[taxon_ids]', options_from_collection_for_select(::Spree::CategoryTaxon.top_categories, 'id', 'name', @product.taxon_ids ), id: 'product_category', class: 'form-control' )
+          = link_to('Option Types 2', related_option_types_path(record_type:'taxon',record_id: ::Spree::Taxon.under_categories.where(name:'Clothing').first.id, format:'json', token: spree_current_user.try(:spree_api_key) ), method: :get, class:'btn btn-secondary hidden')
+
+      %div.hidden(data-hook="admin_product_form_taxons")
+        = f.field_container :taxons do
+          = f.label :taxon_ids, plural_resource_name(Spree::Taxon)
+          %br/
+      %div(data-hook="admin_product_form_meta" class="hidden")
+        %div(data-hook="admin_product_form_meta_title")
+          = f.field_container :meta_title do
+            = f.label :meta_title
+            = f.text_field :meta_title, class: 'fullwidth'
+        %div(data-hook="admin_product_form_meta_keywords")
+          = f.field_container :meta_keywords do
+            = f.label :meta_keywords
+            = f.text_field :meta_keywords, class: 'fullwidth'
+        %div(data-hook="admin_product_form_meta_description")
+          = f.field_container :meta_description do
+            = f.label :meta_description
+            = f.text_field :meta_description, class: 'fullwidth'
+
+      .box-shadow.mt-4.p-3.ps-rel(data-hook="admin_product_form_variants")
+        = render partial: 'product_variant'
+        = render partial: 'color_picker'
+      .box-shadow.mt-4.pt-3.pr-3.pl-3.pb-0(data-hook="admin_product_form_sizes")
+        = render partial: 'product_sizes', locals: { f: f }
+
+      .box-shadow.mt-4.pt-3.pr-3.pl-3(data-hook="admin_product_form_shipping")
+        %div(data-hook="admin_product_shipping_standard")
+          = f.field_container :shipping_standard do
+            %label(for="product_shipping_standard")= 'Approximate Standard Shipping Time'
+            %input#shipping_standard.fullwidth(type="text")
+        %div(data-hook="admin_product_shipping_expedite")
+          = f.field_container :shipping_expedite do
+            %label(for="shipping_standard_expedite")= "Approximate Expedite Shipping Time"
+            %input#shipping_standard_expedite.fullwidth(type="text")
+
+      %br/
+      %fieldset.no-border-bottom
+        %legend(align="center") #{t('spree.main_images')}
+        %table(id="main_images_table" class="table index sortable inline-editable-table" data-hook="images_table" data-sortable-link="#{@product.try(:id) ? update_positions_admin_product_images_path(@product) : ''}" )
+          %colgroup
+            %col(style="width: 5%")
+            %col(style="width: 10%")
+            - if @product.has_variants?
+              %col(style="width: 40%")
+            %col(style="width: 30%")
+            %col(style="width: 15%")
+
+          %thead
+            %tr(data-hook="images_header")
+              %th
+              %th #{ t('spree.thumbnail') }
+              - if @product.has_variants?
+                %th #{ Spree::Variant.model_name.human }
+              %th #{ Spree::Image.human_attribute_name(:alt) }
+              %th(class="actions")
+
+          %tbody
+            - if @product.gallery.images.size > 0
+              = render partial: 'spree/admin/images/image_row', collection: @product.gallery.images, as: :image
+            - else
+              %tr(id="new_product_image_row_0")
+                = render partial: 'product_upload_image', locals: { f: f, row_id: 'new_product_image_row_0' }
+            = render partial: 'product_upload_image', locals: { f: f, row_id: 'new_product_image_row' }
+        .pull-right
+          %button(type='button' class='btn btn-secondary' onclick="addMoreProductImageRow()") More Image
+      - if false && @product.id
+        %br/
+        %fieldset.no-border-bottom
+          %legend(align="center") #{t('spree.variants')}
+          %table(class="table index sortable inline-editable-table" data-sortable-link="#{update_positions_admin_product_variants_path(@product) }")
+            %colgroup
+              %col(style="width: 5%")
+              %col(style="width: 50%")
+              %col(style="width: 30%")
+              %col(style="width: 15%")
+            %thead(data-hook="variants_header")
+              %tr
+                %th
+                %th #{t('spree.options') }
+                %th #{ Spree::Variant.human_attribute_name(:price) }, #{ Spree::Variant.human_attribute_name(:sku) }
+                %th.actions
+            %tbody
+              = render partial: 'product_variant_row', collection: @product.variants, as: :variant, locals: { product: @product }
+
+          .pull-right
+            = link_to(t('spree.new_variant'), new_admin_product_variant_path([@product] ), class:'btn btn-secondary' )
+      %br/
+      %fieldset.no-border-bottom
+        %legend(align="center") #{ plural_resource_name(Spree::ProductProperty) }
+        .add_product_properties(data-hook="add_product_properties")/
+        %table(id="product_properties_table" class="index #{@product.try(:id) ? 'sortable' : ''}" data-hook data-sortable-link="#{@product.try(:id) ? update_positions_admin_product_product_properties_path(@product) : ''}")
+          %thead
+            %tr(data-hook="product_properties_header")
+              %th
+              %th #{ Spree::Property.model_name.human }
+              %th #{ Spree::ProductProperty.human_attribute_name(:value) }
+              %th.actions
+          %tbody(id="product_properties" data-hook="product_properties")
+            = f.fields_for :product_properties do |pp_form|
+              = render 'spree/admin/product_properties/product_property_fields', f: pp_form, object_url: pp_form.object.try(:id) ? admin_product_product_property_path(@product.slug, pp_form.object.id) : nil
+        = hidden_field_tag 'clear_product_properties', 'true'
+        .pull-right
+          %button(type='button' class='btn btn-secondary' onclick="addMoreProductPropertyRow()") More Property
+
+      - if @product.id && !@product.deleted?
+        = f.fields_for :variant_property_rules, @variant_property_rule do |rule_form|
+          -#= rule_form.hidden_field 'id', value: @variant_property_rule.id
+          = rule_form.hidden_field 'option_value_ids', value: @option_value_ids.to_a.join(',')
+          - if @option_value_ids.present?
+            %fieldset.no-border-top
+              %table(class="index #{@product.try(:id) ? 'sortable' : ''}" data-hook data-sortable-link="#{ @product.try(:id) ? update_positions_admin_product_variant_property_rule_values_path(@product) : ''}")
+                %thead
+                  %tr(data-hook="variant_property_values_header")
+                    %th
+                    %th #{ Spree::Property.model_name.human }
+                    %th #{ Spree::ProductProperty.human_attribute_name(:value) }
+                    %th.actions
+                %tbody#variant_property_values
+                  = rule_form.fields_for :values do |values_form|
+                    = render 'spree/admin/product_properties/product_property_fields', f: values_form, object_url: values_form.object.try(:id) ? admin_product_product_property_path(@product.slug, values_form.object.id) : nil
+              - if can?([:create, :update], Spree::VariantPropertyRule)
+                = render 'spree/admin/shared/edit_resource_links'
+
+      %datalist#properties
+        = safe_join @product.properties.map { |name| tag(:option, value: name) }
+
+    %div(class="right col-3" data-hook="admin_product_form_right")

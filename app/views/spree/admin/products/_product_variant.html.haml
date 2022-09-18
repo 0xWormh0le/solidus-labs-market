@@ -1,0 +1,40 @@
+.variant-box
+  .variant-box-head.d-flex.jc-sb
+    .heading
+      %h6="Variants"
+      %p="Choose all the variants that you supply"
+    .action-group
+      %a.btn.btn-bg-white.w-16.brnd-6.add-variant= "Add Variant"
+      %a.btn.btn-bg-black.brnd-6.confirm-variant
+        %i.fa.fa-check
+  .variant-box-body.d-flex.f-wrap.p-4
+    - value = { 'presentation' => 'Red', 'extra_value' => '#ff0000', 'option_id' => 5 }
+    = render partial: 'variant_one_box', locals: { option: value }
+    - value = { 'presentation' => 'Green', 'extra_value' => '#00ff00', 'option_id' => 6 }
+    = render partial: 'variant_one_box', locals: { option: value }
+    - value = { 'presentation' => 'Blue', 'extra_value' => '#0000ff', 'option_id' => 7 }
+    = render partial: 'variant_one_box', locals: { option: value }
+    - value = { 'presentation' => 'Black', 'extra_value' => '#000000', 'option_id' => 8 }
+    = render partial: 'variant_one_box', locals: { option: value }
+    - value = { 'presentation' => 'White', 'extra_value' => '#ffffff', 'option_id' => 9 }
+    = render partial: 'variant_one_box', locals: { option: value }
+    - value = { 'presentation' => 'Pink', 'extra_value' => '#ffcccc', 'option_id' => 12 }
+    = render partial: 'variant_one_box', locals: { option: value }
+    - value = { 'presentation' => 'Cyan', 'extra_value' => '#00ffff', 'option_id' => 13 }
+    = render partial: 'variant_one_box', locals: { option: value }
+    - value = { 'presentation' => 'Gray', 'extra_value' => '#999999', 'option_id' => 20 }
+    = render partial: 'variant_one_box', locals: { option: value }
+    - value = { 'presentation' => 'Navy', 'extra_value' => '#000099', 'option_id' => 30 }
+    = render partial: 'variant_one_box', locals: { option: value }
+    - value = { 'presentation' => 'Teal', 'extra_value' => '#ffffff', 'option_id' => 67 }
+    = render partial: 'variant_one_box', locals: { option: value }
+    - value = { 'presentation' => 'Maroon', 'extra_value' => '#990033', 'option_id' => 89 }
+    = render partial: 'variant_one_box', locals: { option: value }
+    - value = { 'presentation' => 'Brown', 'extra_value' => '#a8813d', 'option_id' => 116 }
+    = render partial: 'variant_one_box', locals: { option: value }
+    - value = { 'presentation' => 'Baby Blue / Black', 'extra_value' => '#ccfff9,#000000', 'option_id' => 14 }
+    = render partial: 'variant_one_box', locals: { option: value }
+    - value = { 'presentation' => 'Blue / White', 'extra_value' => '#00ff00,#ffffff', 'option_id' => 15 }
+    = render partial: 'variant_one_box', locals: { option: value }
+    - value = { 'presentation' => 'Maroon / White', 'extra_value' => '#990033,#ffffff', 'option_id' => 16 }
+    = render partial: 'variant_one_box', locals: { option: value }

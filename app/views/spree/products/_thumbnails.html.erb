@@ -1,0 +1,27 @@
+<%# no need for thumbnails unless there is more than one image
+%>
+<% if product.has_variants? %>
+  <ul class="product-thumbnails">
+    <% product.variants.each do |variant| %>
+      <li class='tmb-all tmb-<%= variant.id %>'>
+        <%= link_to(image_tag(variant.gallery.images.first.url(:mini)), variant.gallery.images.first.url(:product)) %>
+        <ul class="variant-thumbnails">
+          <% variant.gallery.images.each do |image| %>
+            <li>
+              <%= link_to(image_tag(image.url(:mini)), image.url(:product)) %>
+            </li>
+          <% end %>
+        </ul>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <ul class="product-thumbnails">
+    <% product.gallery.images.each do |image| %>
+      <% next if image.viewable_id != product.master.id %>
+      <li class='tmb-all tmb-<%= image.viewable_id %>'>
+        <%= link_to(image_tag(image.url(:mini)), image.url(:product)) %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>

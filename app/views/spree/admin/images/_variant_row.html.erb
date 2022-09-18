@@ -1,0 +1,22 @@
+<% if variant.option_values.length > 0 %>
+  <% option = variant.option_values[0] %>
+  <% if option.option_type_id == 2 %>
+  <div class="variant-row d-flex mb-3 pb-3 border-bottom" id="variant-row-<%= variant.id %>">
+    <div class="variant-item">
+      <%= render partial: 'spree/shared/color_box', locals: { color_names: option.presentation, color_values: option.extra_value, var_ids: variant.id, selection: 'selected' } %>
+      <div class="center mt-3"><%= option.presentation %></div>
+    </div>
+    <div class="variant-images scrollbar-macosx w-100 d-flex">
+      <% variant.gallery.images.each do |image| %>
+        <%= render partial: 'variant_image', locals: {image: image} %>
+      <% end %>
+      <div class="gallery-image-add"  data-id="<%= variant.id %>">
+        <div class="d-flex flex-column m-auto">
+          <i class="fas fa-camera m-auto"></i>
+          <span class="m-auto">Add a photo</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <% end %>
+<% end %>

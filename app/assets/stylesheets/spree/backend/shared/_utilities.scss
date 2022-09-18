@@ -1,0 +1,265 @@
+.block-table {
+  display: table;
+  width: 100%;
+
+  .table-cell {
+    display: table-cell;
+    vertical-align: middle;
+    padding: 0 10px;
+
+    &:first-child {
+      padding-left: 0;
+    }
+    &:last-child {
+      padding-right: 0;
+    }
+  }
+}
+
+.hidden {
+  display: none;
+}
+
+/* hide and show elements based on editing */
+.editing .editing-hide {
+  display: none;
+}
+
+.editing .editing-show {
+  display: block;
+}
+
+.editing-show {
+  display: none;
+}
+
+// For block grids
+.frameless {
+  margin-left: -10px;
+  margin-right: -10px;
+}
+
+.container {
+  // Float container right instead of left.
+  .right {
+    float: right;
+  }
+}
+
+.box-shadow {
+  box-shadow: 0 0px 4px 1px rgba(0, 0, 0, 0.2);
+}
+
+.box-body {
+  padding: 2rem 3rem;
+}
+
+.no-border {
+  border: none!important;
+}
+
+.bg-white {
+  background: white!important;
+}
+
+.color-black {
+  color: black!important;
+}
+
+.f-wrap {
+  flex-wrap: wrap;
+}
+
+.fd-row-rev {
+  flex-direction: row-reverse;
+}
+
+.jc-sa {
+  justify-content: space-around;
+}
+
+.jc-sb {
+  justify-content: space-between;
+}
+
+.no-border-focus:focus {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.ml-n-3 {
+  margin-left: -0.75em;
+}
+
+.color-box { 
+  width: 56px;
+  height: 56px; 
+  border-radius: 56px; 
+  margin-right: 10px; 
+  margin-top:3px; 
+  margin-left: 3px; 
+  cursor: pointer; 
+
+  &.selected {
+    border-style: solid; 
+    margin-top:0; 
+    margin-left: 0; 
+    margin-right: 13px; 
+  }
+
+  svg {
+    width: 51px; 
+    height: 51px;  
+  }
+}
+
+.brnd-6 {
+  border-radius: 6px;
+}
+
+.ps-fxd {
+  position: fixed;
+}
+
+.ps-rel {
+  position: relative;
+}
+
+.ps-abs {
+  position: absolute;
+
+  &.rt-0 {
+    right: 0;
+  }
+
+  &.bt-0 {
+    bottom: 0;
+  }
+}
+
+.w-10 {
+  width: 100px;
+}
+
+.w-16 {
+  width: 160px;
+}
+
+.w-29 {
+  width: 290px;
+}
+
+.w-35p {
+  width: 350px;
+}
+
+.h-25p {
+  height: 250px;
+}
+
+.btn {
+  height: 46px;
+  margin-right: 12px;
+  padding: 0 22px;
+  font-family: "Rubik", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  letter-spacing: .025em;
+  line-height: 44px;
+  white-space: nowrap;
+  cursor: pointer;
+  vertical-align: middle;
+  text-transform: none;
+  text-decoration: none;
+  text-align: center;
+  touch-action: manipulation;
+}
+
+.btn-bg-black {
+  background: black;
+  color: white !important;
+  border: black solid 2px;
+  
+  &:hover {
+    background: #333;
+    color: #ccc;
+  }
+}
+
+.btn-bg-white {
+  color: black;
+  background: white !important;
+  border: black solid 2px;
+  
+  &:hover {
+    color: #333;
+    background: #ccc;
+  }
+}
+
+.va-m {
+  vertical-align: middle;
+}
+
+.lh-2 {
+  line-height: 2em;
+}
+
+.lh-4p {
+  line-height: 40px;
+}
+
+.lh-35px {
+  line-height: 35px;
+}
+
+.fs-25 {
+  font-size: 2.5em;
+}
+
+.fs-32px {
+  font-size: 32px;
+}
+
+.mr-13m {
+  margin-right: -13px;
+}
+
+.ml-13m {
+  margin-left: -13px;
+}
+
+.z-9{
+  z-index: 9;
+}
+
+.m-auto {
+  margin: auto;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.h-100 {
+  height: 100%;
+}
+
+.pr-4px {
+  padding-right: 4px;
+}
+
+.pd-4 {
+  padding: 1em;
+}
+
+.csr-ptr {
+  cursor: pointer;
+}
+
+.make-me-sticky {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 75px;
+  padding: 0;
+}

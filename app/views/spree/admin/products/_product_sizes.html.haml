@@ -1,0 +1,145 @@
+.sizes-box
+  .sizes-box-head.d-flex.jc-sb.mb-4
+    .heading
+      %h6.d-flex.va-m.lh-2
+        Sizes - 
+        %div(data-hook="admin_product_form_option_types")
+          = f.hidden_field :option_type_ids, value: @product.option_type_ids.join(',')
+    %a.btn.btn-bg-black.w-16.brnd-6.add-all= "Add all"
+  .sizes-box-body.d-flex.f-wrap.mr-13m.ml-13m
+    %table.lh-4p.mb-0.variant-option-box
+      %thead.center
+        %tr.small
+          %th
+          %th.selected(data-idx="2" onclick="checkColumn(this)")= render partial: 'spree/shared/color_box', locals: { color_names: 'Red', color_values: '#ff0000', var_ids: '5' }
+          %th.selected(data-idx="3" onclick="checkColumn(this)")= render partial: 'spree/shared/color_box', locals: { color_names: 'Green', color_values: '#00ff00', var_ids: '6' }
+          %th.selected(data-idx="4" onclick="checkColumn(this)")= render partial: 'spree/shared/color_box', locals: { color_names: 'White', color_values: '#ffffff', var_ids: '9' }
+          %th.selected(data-idx="5" onclick="checkColumn(this)")= render partial: 'spree/shared/color_box', locals: { color_names: 'Pink', color_values: '#ffcccc', var_ids: '12' }
+          %th.selected(data-idx="6" onclick="checkColumn(this)")= render partial: 'spree/shared/color_box', locals: { color_names: 'Maroon / White', color_values: '#990033,#ffffff', var_ids: '16' }
+          %th
+      %tbody
+        %tr
+          %td
+            .option-box.d-flex.jc-sb
+              %div= 'US 6.0 / EU 38.5 / CM 24'
+              %a.option-remove(onclick="removeRow(this)")
+          %td.fs-25
+            .checkbox
+              %span.cr.no-border
+                %input{:type => "checkbox"}
+                %i.cr-icon.fa.fa-check
+          %td.fs-25
+            .checkbox
+              %span.cr.no-border
+                %input{:type => "checkbox"}
+                %i.cr-icon.fa.fa-check
+          %td.fs-25
+            .checkbox
+              %span.cr.no-border
+                %input{:type => "checkbox"}
+                %i.cr-icon.fa.fa-check
+          %td.fs-25
+            .checkbox
+              %span.cr.no-border
+                %input{:type => "checkbox"}
+                %i.cr-icon.fa.fa-check
+          %td.fs-25
+            .checkbox
+              %span.cr.no-border
+                %input{:type => "checkbox"}
+                %i.cr-icon.fa.fa-check
+          %td
+        %tr
+          %td
+            .option-box.d-flex.jc-sb
+              %div= 'US 6.5 / EU 39.0 / CM 24.5'
+              %a.option-remove(onclick="removeRow(this)")
+          %td.fs-25
+            .checkbox
+              %span.cr.no-border
+                %input{:type => "checkbox"}
+                %i.cr-icon.fa.fa-check
+          %td.fs-25
+            .checkbox
+              %span.cr.no-border
+                %input{:type => "checkbox"}
+                %i.cr-icon.fa.fa-check
+          %td.fs-25
+            .checkbox
+              %span.cr.no-border
+                %input{:type => "checkbox"}
+                %i.cr-icon.fa.fa-check
+          %td.fs-25
+            .checkbox
+              %span.cr.no-border
+                %input{:type => "checkbox"}
+                %i.cr-icon.fa.fa-check
+          %td.fs-25
+            .checkbox
+              %span.cr.no-border
+                %input{:type => "checkbox"}
+                %i.cr-icon.fa.fa-check
+          %td
+        %tr
+          %td
+            .option-box.d-flex.jc-sb
+              %div= 'US 7.0 / EU 39.5 / CM 25'
+              %a.option-remove(onclick="removeRow(this)")
+          %td.fs-25
+            .checkbox
+              %span.cr.no-border
+                %input{:type => "checkbox"}
+                %i.cr-icon.fa.fa-check
+          %td.fs-25
+            .checkbox
+              %span.cr.no-border
+                %input{:type => "checkbox"}
+                %i.cr-icon.fa.fa-check
+          %td.fs-25
+            .checkbox
+              %span.cr.no-border
+                %input{:type => "checkbox"}
+                %i.cr-icon.fa.fa-check
+          %td.fs-25
+            .checkbox
+              %span.cr.no-border
+                %input{:type => "checkbox"}
+                %i.cr-icon.fa.fa-check
+          %td.fs-25
+            .checkbox
+              %span.cr.no-border
+                %input{:type => "checkbox"}
+                %i.cr-icon.fa.fa-check
+          %td
+        %tr
+          %td
+            .option-box.d-flex.jc-sb
+              %div= 'US 7.5 / EU 40.0 / CM 25.5'
+              %a.option-remove(onclick="removeRow(this)")
+          %td.fs-25
+            .checkbox
+              %span.cr.no-border
+                %input{:type => "checkbox"}
+                %i.cr-icon.fa.fa-check
+          %td.fs-25
+            .checkbox
+              %span.cr.no-border
+                %input{:type => "checkbox"}
+                %i.cr-icon.fa.fa-check
+          %td.fs-25
+            .checkbox
+              %span.cr.no-border
+                %input{:type => "checkbox"}
+                %i.cr-icon.fa.fa-check
+          %td.fs-25
+            .checkbox
+              %span.cr.no-border
+                %input{:type => "checkbox"}
+                %i.cr-icon.fa.fa-check
+          %td.fs-25
+            .checkbox
+              %span.cr.no-border
+                %input{:type => "checkbox"}
+                %i.cr-icon.fa.fa-check
+          %td
+

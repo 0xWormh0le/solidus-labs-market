@@ -1,0 +1,234 @@
+= javascript_include_tag 'spree/frontend/checkout'
+
+- content_for :footer_extra do
+  = stylesheet_link_tag 'font-awesome.min.css'
+
+#checkout-container.checkout-container.container(data-hook)
+  = render partial: 'spree/shared/error_messages', locals: { target: @order }
+  .col-md-8.col-lg-8.pd-m-0
+    .checkout-nav.d-none.d-sm-block(data-hook="checkout_header")
+      -# %h1(class="columns three alpha" data-hook="checkout_title")= t('spree.checkout')
+      -#%div(class="columns thirteen omega checkout-header" data-hook="checkout_progress")= checkout_progress
+      .columns.thirteen.omega.checkout-header
+        %ol.progress-steps
+          %li 
+            = content_tag('span', link_to('Shipping', '#shipping'))
+          %li 
+            = content_tag('span', link_to('Payment', '#payment'))
+          %li 
+            = content_tag('span', link_to('Review', '#review'))
+          %li 
+            = content_tag('span', link_to('Order Confirmed', '#confirm'))
+    .row(data-hook="checkout_content")
+      %div(class="checkout-form-wrapper w-100 columns #{@order.state != 'confirm' ? 'alpha twelve' : 'alpha omega sixteen'}" data-hook="checkout_form_wrapper")
+        .d-flex.checkout-status(onclick="goCheckoutHome()")
+          %i.cr-icon.fa.fa-angle-left.fa-2x.ml-3.al-vc.go-home.cursor-pointer.d-sm-none.d-none-m
+          %h6.my-3.d-sm-none.pl-3{ id: "breadcrumbLabel"}='Order Confirmation'
+        = form_for @order, url: update_checkout_path('address'), html: { id: "checkout_form_address" } do |form|
+          = hidden_field_tag(:order_id, @order.id)
+          #shipping-box.checkout-param-group
+            #shipping.box-shadow
+              .box-body
+                .my-3.box-title
+                  %h6.mb-0.mt-1='Shipping Information'
+                #shippingInfo.d-flex.justify-content-between.d-sm-none(onclick="shippingInfo()")
+                  .shipping-info-group
+                    .shipping-info-content='Select address'
+                  %i.cr-icon.fa.fa-angle-right.fa-2x.cursor-pointer
+                %div.dropdown-divider.margin-x-plus-1.box-thin-shadow.d-none
+                #shippingBody.d-none-m.d-sm-block.mt-3
+                  .contact.mb-2
+                    %label{:for => "full_name"}='Contact'
+                    %div.row.mx-0
+                      .col-sm-6.col-12.pdl-0.pr-0.pr-sm-3
+                        %input.form-control{:id => "full_name", :placeholder => "Full Name"}
+                      .phone.d-flex.col-sm-6.col-12.pdl-0.pr-0
+                        %input.form-control.col-2.px-0.text-center{:id => "prefix", :value => "+1", :size => "4"}
+                        %input.form-control{:id => "mobile", :placeholder => "Mobile", :size => "12"}
+                  .address
+                    %label{:for => "street"}='Address'
+                    %div.row.mx-0.mb-2
+                      .col-sm-6.col-12.pdl-0.pr-0.pr-sm-3
+                        %input.form-control{:id => "street", :placeholder => "Street"}
+                      .col-sm-6.col-12.pdl-0.pr-0
+                        %input.form-control{:id => "apartment", :placeholder => "Apartment Or Unit"}
+                    %div.row.mx-0.mb-2
+                      .col-sm-4.col-6.pdl-0
+                        %input.form-control{:id => "country", :placeholder => "Country"}
+                      .col-sm-4.col-6.pdl-0.pr-0.pr-sm-3
+                        %input.form-control{:id => "state", :placeholder => "State/Province/Region"}
+                      .col-sm-4.col-8.pdl-0.pr-0
+                        %input.form-control{:id => "city", :placeholder => "City"}
+                    %div.row.mx-0.mb-2
+                      .col-md-3.col-4.pdl-0
+                        %input.form-control{:id => "zipcode", :placeholder => "Zipcode"}
+
+                  
+                  %div
+                    .submit.d-flex
+                      %div
+                        %a#confirm_address.btn.btn-bg-black.w-100{:href => "#"}='Confirm Address'
+                      %div
+                        .checkbox.mt-4
+                          %label
+                            %input#same_billing{:type => "checkbox", :checked => "checked"}
+                              %span.cr
+                                %i.cr-icon.fa.fa-check
+                            Same as billing address
+
+            #billing.box-shadow.mt-4{:style => "display:none;"}
+              .box-body
+                %h6='Billing Address'
+                .contact.mb-2
+                  %label{:for => "contact_full_name"}='Contact'
+                  .d-flex
+                    .col-md-6.pdl-0
+                      %input.form-control{:id => "contact_full_name", :placeholder => "Full Name"}
+                    .phone.d-flex.col-md-6.pdr-0.pdl-0
+                      %input.form-control.col-md-2{:id => "prefix", :value => "+1", :size => "4"}
+                      %input.form-control{:id => "billing_mobile", :placeholder => "Mobile", :size => "12"}
+                .address
+                  %label{:for => "billing_street"}='Address'
+                  .d-flex.mb-2
+                    .col-md-6.pdl-0
+                      %input.form-control{:id => "billing_street", :placeholder => "Street"}
+                    .col-md-6.pdr-0.pdl-0
+                      %input.form-control{:id => "billing_apartment", :placeholder => "Apartment Or Unit"}
+                  .d-flex.mb-2
+                    .col-md-4.pdl-0
+                      %input.form-control{:id => "billing_country", :placeholder => "Street"}
+                    .col-md-4.pdl-0
+                      %input.form-control{:id => "billing_state", :placeholder => "Apartment Or Unit"}
+                    .col-md-4.pdr-0.pdl-0
+                      %input.form-control{:id => "billing_city", :placeholder => "Apartment Or Unit"}
+                  .d-flex.mb-2
+                    .col-md-3.pdl-0
+                      %input.form-control{:id => "billing_zipcode", :placeholder => "Zipcode"}
+
+        = form_for @order, url: update_checkout_path('payment'), html: { id: "checkout_form_payment" } do |form|
+          = hidden_field_tag(:order_id, @order.id)
+          .hidden
+            = radio_button_tag("payment_method", 'paypal', false, {id: 'payment_paypal'})
+            = radio_button_tag("payment_method", 'card', false, {id: 'payment_card'})
+            = radio_button_tag("payment_method", 'alipay', false, {id: 'payment_alipay'})
+            = radio_button_tag("payment_method", 'googlepay', false, {id: 'payment_googlepay'})
+            = radio_button_tag("payment_method", 'applepay', false, {id: 'payment_applepay'})
+          #payment-box.checkout-param-group
+            #payment.box-shadow.mt-4
+              .box-body
+                .my-3.box-title
+                  %h6.mb-0.mt-1='Payment Information'
+                %h6.d-none.d-sm-block='Payment Method'
+                #paymentInfo.d-flex.justify-content-between.d-sm-none(onclick="paymentInfo()")
+                  .payment-info-group
+                    .payment-info-content.d-flex
+                      %img.mx-2{:src => "/img/shop/payment/paypal.png"}
+                      %img.mx-2.rounded.black-border{:src => "/img/shop/payment/card.png"}
+                      %img.mx-2{:src => "/img/shop/payment/Alipay.png"}
+                      %img.mx-2.rounded.black-border{:src => "/img/shop/payment/googlePay.png"}
+                      %img.mx-2.rounded.black-border{:src => "/img/shop/payment/applePay.png"}
+                    .selected-payment-info.d-none
+                  %i.cr-icon.fa.fa-angle-right.fa-2x
+                %div.dropdown-divider.margin-x-plus-1.box-thin-shadow.d-none-m
+                #paymentBody.d-none.d-sm-block.mt-3
+                  .contact
+                    .d-flex
+                      .radius-number.mr-4
+                        1
+                      %div.w-100
+                        %div
+                          %h6.mb-0.dark-blue-font
+                            Choose how you want to make today's payment of 
+                            = @order.display_order_total_after_store_credit.to_html
+                          .font-italic='For AMEX or savings accounts consider PayPal.'
+                        .address.mt-4
+                          .d-flex.rounded.grey-border.text-center
+                            .payment-method.col.pt-4.pb-4.position-relative.cursor-pointer.almost-full-height-boder-right{:data => "paypal"}
+                              %img{:src => "/img/shop/payment/paypal.png"}
+                              %div.mt-1
+                                PayPal
+                            .payment-method.col.pt-4.pb-4.position-relative.cursor-pointer.almost-full-height-boder-right{:data => "card"}
+                              %img.rounded.black-border{:src => "/img/shop/payment/card.png"}
+                              %div.mt-1
+                                Credit/Debit
+                            .payment-method.col.pt-3.pb-4.position-relative.cursor-pointer.almost-full-height-boder-right{:data => "alipay"}
+                              %img{:src => "/img/shop/payment/Alipay.png"}
+                              %div.mt-1
+                                AliPay
+                            .payment-method.col.pt-4.pb-4.position-relative.cursor-pointer.almost-full-height-boder-right{:data => "googlepay"}
+                              %img.rounded.black-border{:src => "/img/shop/payment/googlePay.png"}
+                              %div.mt-1
+                                Google Pay
+                            .payment-method.col.pt-4.pb-4.position-relative.cursor-pointer{:data => "applepay"}
+                              %img.rounded.black-border{:src => "/img/shop/payment/applePay.png"}
+                              %div.mt-1
+                                Apple Pay
+                #paymentMBody.d-sm-none.d-none-m
+                  %a.btn.btn-bg-black.w-100.payment-method{:href => "#", :data => "paypal"}='Checkout with PayPal'
+                  %div.row.mx-0.py-5
+                    .col-5.mt-3
+                      %hr.border-dark
+                    .col-2.text-center=' OR '
+                    .col-5.mt-3
+                      %hr.border-dark
+                  %a.col.btn.btn-outline-dark.payment-method{:href => "#", :data => "card"}='Pay by credit card'
+                  %a.col.btn.btn-outline-dark.payment-method{:href => "#", :data => "alipay"}='Pay with Alipay'
+                  %a.col.btn.btn-outline-dark.payment-method{:href => "#", :data => "googlepay"}='Pay with Google Pay'
+                  %a.col.btn.btn-outline-dark.payment-method{:href => "#", :data => "applepay"}='Pay with Apple Pay'
+                  #card_info.d-none
+                    .contact.mt-5
+                      %label{:for => "card_number"}='Card Info'
+                      %input.form-control{:id => "card_number", :placeholder => "Card Number"}
+                      .d-flex
+                        %input.form-control.col-3.mr-2{:id => "cvv", :placeholder => "CVV", :size => "4"}
+                        %input.form-control.col-5{:id => "expiration_date", :placeholder => "Exp.Date(MM/DD/YYYY)", :size => "8"}
+                    .address
+                      %label{:for => "street"}='Address'
+                      %div.row.mx-0
+                        .col-sm-6.col-12.pdl-0.pr-0.pr-sm-3
+                          %input.form-control{:id => "street", :placeholder => "Street"}
+                        .col-sm-6.col-12.pdl-0.pr-0
+                          %input.form-control{:id => "apartment", :placeholder => "Apartment Or Unit"}
+                      %div.row.mx-0
+                        .col-sm-4.col-6.pdl-0
+                          %input.form-control{:id => "country", :placeholder => "Country"}
+                        .col-sm-4.col-6.pdl-0.pr-0.pr-sm-3
+                          %input.form-control{:id => "state", :placeholder => "State/Province/Region"}
+                        .col-sm-4.col-8.pdl-0.pr-0
+                          %input.form-control{:id => "city", :placeholder => "City"}
+                      %div.row.mx-0
+                        .col-md-3.col-4.pdl-0
+                          %input.form-control{:id => "zipcode", :placeholder => "Zipcode"}
+
+        = form_for @order, url: update_checkout_path('confirm'), html: { id: "checkout_form_confirm" } do |form|
+          = hidden_field_tag(:order_id, @order.id)
+          #review-box.checkout-param-group
+            #review.box-shadow.mt-4
+              .box-body
+                %h6.d-none.d-sm-block='Confirm Order'
+                .d-flex.justify-content-between
+                  %h6.d-sm-none='Order details'
+                  .d-sm-none='Edit cart'
+                .contact.mt-4
+                  .checkout.cart-content
+                    = render partial: 'spree/checkout/order_line_item_entry', collection: cart_items, as: :line_item
+                  %a#confirm_order.btn.btn-bg-black.mt-5{:href => "#"}='Confirm Order'
+
+          -# if @order.state == 'address' || !@order.email?
+            -#%div(class="field field-required" style='clear: both')
+              -#= form.label :email
+              -#%br/
+              -#= form.email_field :email, required: true
+          -#= render @order.state, form: form
+
+
+  .col-md-4.col-lg-4.pd-m-0
+    .make-me-sticky
+      #checkout-summary.checkout-summary(data-hook="checkout_summary_box" class="cart-summary box-shadow box-body")
+        - if @order.state != 'confirm'
+          = render partial: 'summary', locals: { order: @order }
+      %span#disclaimer= 'Upon clicking “Place Order”, I confirm I have read and acknowledge all terms and policies and confirm the order is correct.'
+
+:javascript
+  Spree.current_order_id = "#{ @order.number }";
+  Spree.current_order_token = "#{ @order.guest_token }";

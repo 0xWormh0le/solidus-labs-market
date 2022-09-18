@@ -1,0 +1,87 @@
+:ruby
+  @variant ||= resource
+  @product ||= @variant.product if @variant
+  @product_properties = @product.product_properties
+  show_debug = %w|development staging|.include?(Rails.env)
+
+- content_for :footer_extra do
+  = javascript_include_tag 'spree/frontend/product'
+
+- if spree_current_user
+  #manage_actions.container.alert.alert-secondary.text-right
+    - if can?(:manage, resource)
+      = link_to('Edit Product', edit_admin_product_path(id: resource.product_id), class:'btn btn-warning')
+      = link_to('Edit Variant', edit_admin_product_variant_path(product_id: resource.product.slug, id: resource.id), class:'btn btn-warning') unless resource.is_master?
+      = link_to(t('spree.admin.variants.edit.modify_variants'), admin_product_variants_path(product_id: resource.slug), class:'btn btn-warning') unless resource.is_master?
+      %br/
+    -# elsif can?(:manage, ::Spree::Product)
+    = link_to('List This Item', new_admin_product_path(product:{master_product_id: resource.product_id}), class:'btn btn-success' )
+/ Main Content Wrapper Start
+- cache [I18n.locale, current_pricing_options, @variant] do
+  %div(data-hook="product_show")
+  .container
+    .container.mb-12
+    #content.main-content-wrapper
+      .page-content-inner.enable-full-width
+        #wrapper.row(data-hook="product_left_part_wrap")
+          %ul.breadcrumbs
+            - @variant.product.categories.each do|category_list|
+              - category_list.each_with_index do|category, category_index|
+                %li
+                  = link_to(category.name, seo_url(category))
+          .padding-top-2x.mt-2.hidden-sm-up.product-info-basic
+            .col-9.product-title
+              .product-taxon
+                %span= @product.taxons.last ? @product.taxons.last.name : ''
+              .product-title
+                %h6= @product.name
+            .col-3.text-right.product-price
+              %h2= @product.price
+          .content-section.col-lg-7.col-md-7.col-sm-7
+            / ############## GALLERY SECTIONS ############
+            .product-main-image
+              .product-image(data-hook="product_images")
+                .product-gallery__large-image
+                  %figure.product-gallery__image
+                    = render partial: 'variant_gallery', locals: { variant: @variant, is_prod: false }
+          / ############## END GALLERY SECTION ############
+          .col-lg-5.col-md-5.col-sm-5
+            .make-me-sticky
+              / ############## SIDEBAR SECTIONS ############
+              .product-summary.mt--40.mt-md--10.mt-sm--30
+                .product-info-basic
+                  .col-9.product-title
+                    .product-taxon
+                      %span= @product.taxons.last ? @product.taxons.last.name : ''
+                    .product-title
+                      %h6= @product.name
+                  .col-3.text-right.product-price
+                    %h2
+                      = '$' + @product.price.to_s
+                - if show_debug && @variant.product.user
+                  %h4.hidden
+                    %strong Seller:
+                    #{@variant.product.user.username}
+                -# %p.text-muted
+                  -# = product_description(@variant) rescue t('spree.product_has_no_description')
+                  -# %a.scroll-to{:href => "#details"} More info
+                .row.margin-top-1x
+              #cart-form(data-hook="cart_form")
+                = render partial: 'spree/products/cart_form_extended'
+
+  / ############## END SIDEBAR SECTION ############
+  / ############## Anything after the sidebar --- description etc. ############
+  %br/
+  %br/
+  #details.bg-secondary.padding-top-2x.padding-bottom-2x.mb-3.mt-40
+    .container
+      .row
+        .col-md-6
+          %h3.h4 Details
+          %p.mb-4
+            = product_description(@variant) rescue t('spree.product_has_no_description')
+        .col-md-6
+          %div(data-hook="product_properties")
+            = render partial: 'spree/products/properties'
+          %div(data-hook="promotions")
+            = render partial: 'spree/products/promotions'
